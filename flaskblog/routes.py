@@ -8,6 +8,7 @@ from flaskblog.forms import (RegistrationForm, LoginForm, UpdateAccountForm,
 from flaskblog.models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
+import re
 
 
 @app.route("/")
@@ -96,7 +97,14 @@ def account():
 def new_post():
     form = PostForm()
     if form.validate_on_submit():
-        post = Post(title=form.title.data, content=form.content.data, author=current_user)
+        pattern = re.compile(r'[\w\.-]+@[\w\.-]+')
+        matches = pattern.findall(form.content.data)
+        pattern1 = re.compile(
+            r'\d{3}[-\.\s]??\d{4}[-\.\s]??\d{4}|\d{5}[-\.\s]??\d{3}[-\.\s]??\d{3}|(?:\d{4}\)?[\s-]?\d{3}[\s-]?\d{4})')
+        matches1 = pattern1.findall(form.content.data)
+
+
+        post = Post(title=form.title.data, content=form.content.data, author=current_user,email=str(matches), number=str(matches1))
         db.session.add(post)
         db.session.commit()
         flash('Your post has been created!', 'success')
