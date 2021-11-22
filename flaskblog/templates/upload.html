@@ -1,0 +1,10 @@
+{% extends 'layout.html' %}
+{% block content %}
+      <legend class="border-bottom mb-4">{{legend}}</legend>
+      <form action = "http://localhost:5000/uploader" method = "POST"
+         enctype = "multipart/form-data">
+         <input type = "file" name = "textfile" accept=".txt" accept=".pdf"/>
+         <input type = "submit"/>
+      </form>
+      
+{% endblock content%}

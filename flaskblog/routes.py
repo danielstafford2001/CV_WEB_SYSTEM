@@ -212,3 +212,8 @@ def writing_update_note(post_id):
         form.notes.data= post.notes
     return render_template('create_note.html', title='Update Notes',
                            form=form, legend='Update Notes')
+
+
+@app.route('/uploader',methods = ['GET','POST'])
+def upload_file():
+    return render_template("upload.html", legend='Update Post')
