@@ -26,14 +26,12 @@ class RegistrationForm(FlaskForm):
         if user:
             raise ValidationError('That email is taken. Please choose a different one.')
 
-
 class LoginForm(FlaskForm):
     email = StringField('Email',
                         validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
-
 
 class UpdateAccountForm(FlaskForm):
     username = StringField('Username',
@@ -55,12 +53,15 @@ class UpdateAccountForm(FlaskForm):
             if user:
                 raise ValidationError('That email is taken. Please choose a different one.')
 
-
 class PostForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     content = TextAreaField('Content', validators=[DataRequired()])
     submit = SubmitField('Post')
 
+
+class PostFormFile(FlaskForm):
+    title = StringField('Job Title', validators=[DataRequired()])
+    submit = SubmitField('Post')
 
 class RequestResetForm(FlaskForm):
     email = StringField('Email',
