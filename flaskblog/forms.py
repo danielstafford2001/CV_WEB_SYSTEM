@@ -59,10 +59,6 @@ class PostForm(FlaskForm):
     submit = SubmitField('Post')
 
 
-class PostFormFile(FlaskForm):
-    title = StringField('Job Title', validators=[DataRequired()])
-    submit = SubmitField('Post')
-
 class RequestResetForm(FlaskForm):
     email = StringField('Email',
                         validators=[DataRequired(), Email()])

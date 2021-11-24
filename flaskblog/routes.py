@@ -4,11 +4,14 @@ from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort
 from flaskblog import app, db, bcrypt, mail
 from flaskblog.forms import (RegistrationForm, LoginForm, UpdateAccountForm,
-                             PostForm, RequestResetForm, ResetPasswordForm,NoteForm, PostFormFile)
+                             PostForm, RequestResetForm, ResetPasswordForm,NoteForm)
 from flaskblog.models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
 import re
+from werkzeug.utils import secure_filename
+import textract
+import glob
 
 
 @app.route("/")
@@ -89,25 +92,6 @@ def account():
     return render_template('account.html', title='Account',
                            image_file=image_file, form=form)
 
-@app.route("/post/new", methods=['GET', 'POST'])
-@login_required
-def new_post():
-    form = PostForm()
-    if form.validate_on_submit():
-        pattern = re.compile(r'[\w\.-]+@[\w\.-]+')
-        matches = pattern.findall(form.content.data)
-        pattern1 = re.compile(
-            r'\d{3}[-\.\s]??\d{4}[-\.\s]??\d{4}|\d{5}[-\.\s]??\d{3}[-\.\s]??\d{3}|(?:\d{4}\)?[\s-]?\d{3}[\s-]?\d{4})')
-        matches1 = pattern1.findall(form.content.data)
-
-
-        post = Post(title=form.title.data, content=form.content.data, author=current_user,email=str(matches), number=str(matches1))
-        db.session.add(post)
-        db.session.commit()
-        flash('Your post has been created!', 'success')
-        return redirect(url_for('home'))
-    return render_template('create_post.html', title='New Post',
-                           form=form, legend='New Post')
 
 @app.route("/post/<int:post_id>")
 def post(post_id):
@@ -196,7 +180,6 @@ def reset_token(token):
         return redirect(url_for('login'))
     return render_template('reset_token.html', title='Reset Password', form=form)
 
-
 @app.route("/post/<int:post_id>/notes", methods=['GET', 'POST'])
 def writing_update_note(post_id):
     post = Post.query.get_or_404(post_id)
@@ -213,15 +196,54 @@ def writing_update_note(post_id):
     return render_template('create_note.html', title='Update Notes',
                            form=form, legend='Update Notes')
 
-
-@app.route('/uploader',methods = ['GET','POST'])
+@app.route('/uploader',methods = ['GET', 'POST'])
 @login_required
 def upload_file():
-    form = PostFormFile()
+    if request.method == 'POST':
+        f = request.files['file']
+        filename = secure_filename(f.filename)
+        f.save(app.config['UPLOAD_FOLDER'] + filename)
+        path= app.config['UPLOAD_FOLDER'] + filename
+        pageDOCX = textract.process(path)
+        pageDOCX=str(pageDOCX,'utf-8')
+        pageDOCX= pageDOCX.replace('\n',' ').strip()
+        #file = open(app.config['UPLOAD_FOLDER'] + filename,"r")
+        content = pageDOCX
+        return redirect(url_for('new_postfile'))
+        #print(path)
 
-    return render_template("upload.html", legend='Update Post')
+    return render_template('upload.html')
 
+#/Users/danielstafford/Desktop/3rd year/Project/CV Work/CV_WEB_SYSTEM/flaskblog/static
+@app.route("/post/newfile", methods=['GET', 'POST'])
+@login_required
+def new_postfile():
+    form = PostForm()
+    if form.validate_on_submit():
+        pattern = re.compile(r'[\w\.-]+@[\w\.-]+')
+        matches = pattern.findall(form.content.data)
+        pattern1 = re.compile(
+            r'\d{3}[-\.\s]??\d{4}[-\.\s]??\d{4}|\d{5}[-\.\s]??\d{3}[-\.\s]??\d{3}|(?:\d{4}\)?[\s-]?\d{3}[\s-]?\d{4})')
+        matches1 = pattern1.findall(form.content.data)
+        post = Post(title=form.title.data, content=form.content.data, author=current_user,email=str(matches), number=str(matches1))
+        db.session.add(post)
+        db.session.commit()
+        flash('Your post has been created!', 'success')
+        return redirect(url_for('home'))
+    elif request.method == 'GET':
+        folder_path= r'/Users/danielstafford/Desktop/3rd year/Project/CV Work/CV_WEB_SYSTEM/flaskblog/static/*'
+        files = glob.glob(folder_path) 
+        max_file = max(files, key=os.path.getctime)
+        pageDOCX = textract.process(max_file)
+        pageDOCX=str(pageDOCX,'utf-8')
+        pageDOCX= pageDOCX.replace('\n',' ').strip()
 
+        form.content.data = pageDOCX
+    return render_template('create_post.html', title='New Post',
+                           form=form, legend='New Post')
+
+@app.route("/post/new", methods=['GET', 'POST'])
+@login_required
 def new_post():
     form = PostForm()
     if form.validate_on_submit():
@@ -230,8 +252,6 @@ def new_post():
         pattern1 = re.compile(
             r'\d{3}[-\.\s]??\d{4}[-\.\s]??\d{4}|\d{5}[-\.\s]??\d{3}[-\.\s]??\d{3}|(?:\d{4}\)?[\s-]?\d{3}[\s-]?\d{4})')
         matches1 = pattern1.findall(form.content.data)
-
-
         post = Post(title=form.title.data, content=form.content.data, author=current_user,email=str(matches), number=str(matches1))
         db.session.add(post)
         db.session.commit()
@@ -239,3 +259,4 @@ def new_post():
         return redirect(url_for('home'))
     return render_template('create_post.html', title='New Post',
                            form=form, legend='New Post')
+        
