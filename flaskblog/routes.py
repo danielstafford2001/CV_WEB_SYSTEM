@@ -1,3 +1,5 @@
+#some parts based on [1] in bibliography
+
 import os
 import secrets
 from PIL import Image

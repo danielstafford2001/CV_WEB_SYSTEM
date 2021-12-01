@@ -1,3 +1,5 @@
+#some parts based on [1] in bibliography
+
 from datetime import datetime
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flaskblog import db, login_manager, app
