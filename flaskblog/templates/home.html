@@ -2,6 +2,7 @@
 
 {% extends "layout.html" %}
 {% block content %}
+    <!--displaying all posts-->
     {% for post in posts.items %}
         <article class="media content-section">
           <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}">
@@ -15,6 +16,7 @@
           </div>
         </article>
     {% endfor %}
+    <!--pagination logic-->
     {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
       {% if page_num %}
         {% if posts.page == page_num %}

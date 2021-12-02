@@ -12,6 +12,7 @@
       </div>
         <form method="POST" action="" enctype="multipart/form-data">
             {{ form.hidden_tag() }}
+             <!--go throguh all inputs for UpdateAccountForm form to check for errors-->
             <fieldset class="form-group">
                 <legend class="border-bottom mb-4">Account Info</legend>
                 <div class="form-group">
@@ -51,6 +52,7 @@
                     {% endif %}
                 </div>
             </fieldset>
+            <!--submit button-->
             <div class="form-group">
                 {{ form.submit(class="btn btn-outline-info") }}
             </div>

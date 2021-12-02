@@ -3,6 +3,7 @@
 {% extends "layout.html" %}
 {% block content %}
   <article class="media content-section">
+    <!--displaying single post with same logic as home page with option to update/delete/add notes for posts-->
     <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}">
     <div class="media-body">
       <div class="article-metadata">
@@ -20,7 +21,7 @@
       <p class="article-content">{{ post.content }}</p>
     </div>
   </article>
-  <!-- Modal -->
+  <!-- Modal used when deleting a post-->
   <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">

@@ -20,7 +20,7 @@ import glob
 @app.route("/home")
 def home():
     page = request.args.get('page', 1, type=int)
-    posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=5)
+    posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=5)#pagination- 5 posts per page in date descending order
     return render_template('home.html', posts=posts)
 
 @app.route("/about")
@@ -33,7 +33,7 @@ def register():
         return redirect(url_for('home'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')#hashing the password to be stored in the db
         user = User(username=form.username.data, email=form.email.data, password=hashed_password)
         db.session.add(user)
         db.session.commit()
@@ -49,7 +49,7 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
-            login_user(user, remember=form.remember.data)
+            login_user(user, remember=form.remember.data)#a cookie is created to allow remembering of users for a given period of time
             next_page = request.args.get('next')
             return redirect(next_page) if next_page else redirect(url_for('home'))
         else:
@@ -61,6 +61,7 @@ def logout():
     logout_user()
     return redirect(url_for('home'))
 
+#this function is used to make the profile pricture fit nicely inot the cirles instead of just placing them in.
 def save_picture(form_picture):
     random_hex = secrets.token_hex(8)
     _, f_ext = os.path.splitext(form_picture.filename)
@@ -94,7 +95,7 @@ def account():
     return render_template('account.html', title='Account',
                            image_file=image_file, form=form)
 
-
+#show a specific post on its own, can only open the ones created by the current user
 @app.route("/post/<int:post_id>")
 def post(post_id):
     post = Post.query.get_or_404(post_id)
@@ -131,6 +132,7 @@ def delete_post(post_id):
     return redirect(url_for('home'))
 
 
+#show all posts by a given user whilest using pagination in descending posting order
 @app.route("/user/<string:username>")
 def user_posts(username):
     page = request.args.get('page', 1, type=int)
@@ -140,6 +142,7 @@ def user_posts(username):
         .paginate(page=page, per_page=5)
     return render_template('user_posts.html', posts=posts, user=user)
 
+#trying to send email for password reset at login
 def send_reset_email(user):
     token = user.get_reset_token()
     msg = Message('Password Reset Request',
@@ -152,6 +155,7 @@ If you did not make this request then simply ignore this email and no changes wi
 '''
     mail.send(msg)
 
+#trying to send email for password reset at login
 @app.route("/reset_password", methods=['GET', 'POST'])
 def reset_request():
     if current_user.is_authenticated:
@@ -164,6 +168,7 @@ def reset_request():
         return redirect(url_for('login'))
     return render_template('reset_request.html', title='Reset Password', form=form)
 
+#trying to send email for password reset at login
 @app.route("/reset_password/<token>", methods=['GET', 'POST'])
 def reset_token(token):
 
@@ -182,6 +187,7 @@ def reset_token(token):
         return redirect(url_for('login'))
     return render_template('reset_token.html', title='Reset Password', form=form)
 
+#adding notes for a given post
 @app.route("/post/<int:post_id>/notes", methods=['GET', 'POST'])
 def writing_update_note(post_id):
     post = Post.query.get_or_404(post_id)
@@ -198,6 +204,7 @@ def writing_update_note(post_id):
     return render_template('create_note.html', title='Update Notes',
                            form=form, legend='Update Notes')
 
+#route that takes file as input and cleans the data (txt,docx,doc,pdf) are accepted and then passes the data onto the new_postfile route which is just a form for a new post that will be pre-populated with the data.
 @app.route('/uploader',methods = ['GET', 'POST'])
 @login_required
 def upload_file():
@@ -244,6 +251,7 @@ def new_postfile():
     return render_template('create_post.html', title='New Post',
                            form=form, legend='New Post')
 
+#new post via text route
 @app.route("/post/new", methods=['GET', 'POST'])
 @login_required
 def new_post():
