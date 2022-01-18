@@ -1,0 +1,11 @@
+2022-01-18 19:31:35,489:INFO: Getting sentences
+2022-01-18 19:31:36,639:INFO: Getting tags index
+2022-01-18 19:31:36,639:INFO: Getting words index
+2022-01-18 19:31:36,648:INFO: Padding sequence
+2022-01-18 19:33:31,716:INFO: Getting sentences
+2022-01-18 19:33:32,874:INFO: Getting tags index
+2022-01-18 19:33:32,875:INFO: Getting words index
+2022-01-18 19:33:32,881:INFO: Padding sequence
+2022-01-18 19:44:16,247:INFO: Getting sentences
+2022-01-18 19:44:17,314:INFO: Getting tags index
+2022-01-18 19:44:17,314:INFO: Getting words index
