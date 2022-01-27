@@ -99,15 +99,15 @@ def saving_model():
 #saving_model()
 
 # Recreate the exact same model, including its weights and the optimizer
-new_model = tf.keras.models.load_model('my_model.h5')
-x_train, x_test, y_train, y_test, words, tags, max_len,X,y, num_words,num_tags = text_preprocessing()
+#new_model = tf.keras.models.load_model('my_model.h5')
+#x_train, x_test, y_train, y_test, words, tags, max_len,X,y, num_words,num_tags = text_preprocessing()
 
-i = np.random.randint(0, x_test.shape[0]) 
-p = new_model.predict(np.array([x_test[i]]))
-p = np.argmax(p, axis=-1)
-y_true = np.argmax(np.array(y_test), axis=-1)[i]
-print("{:15}{:5}\t {}\n".format("Word", "True", "Pred"))
-print("-" *30)
-for w, true, pred in zip(x_test[i], y_true, p[0]):
-    print("{:15}{}\t{}".format(words[w-1], tags[true], tags[pred]))
+#i = np.random.randint(0, x_test.shape[0]) 
+#p = new_model.predict(np.array([x_test[i]]))
+#p = np.argmax(p, axis=-1)
+#y_true = np.argmax(np.array(y_test), axis=-1)[i]
+#print("{:15}{:5}\t {}\n".format("Word", "True", "Pred"))
+#print("-" *30)
+#for w, true, pred in zip(x_test[i], y_true, p[0]):
+#    print("{:15}{}\t{}".format(words[w-1], tags[true], tags[pred]))
 
