@@ -19,7 +19,7 @@ plt.style.use("ggplot")
 
 def text_preprocessing():
     data = pd.read_csv('1-3000.csv')
-    data = data.fillna(method="ffill")
+    data = data.fillna(method="ffill")#fill any empty rows with the row above
 
    # print("Unique words in corpus:", data['Word'].nunique())
    # print("Unique tags in corpus:", data['Tag'].nunique())
@@ -89,7 +89,6 @@ def create_model():
 
 #create_model()
 
-
 def saving_model():
     model,X,y,x_train,x_test,y_train, y_test= create_model()
     model.fit(x_train, np.array(y_train),validation_split=0.2,batch_size=32, epochs=2,verbose=1)
@@ -99,8 +98,12 @@ def saving_model():
 #saving_model()
 
 # Recreate the exact same model, including its weights and the optimizer
-#new_model = tf.keras.models.load_model('my_model.h5')
-#x_train, x_test, y_train, y_test, words, tags, max_len,X,y, num_words,num_tags = text_preprocessing()
+new_model = tf.keras.models.load_model('my_model.h5')
+
+x_train, x_test, y_train, y_test, words, tags, max_len,X,y, num_words,num_tags = text_preprocessing()
+
+loss, acc = new_model.evaluate(x_test, y_test)
+#print('Restored model, accuracy: {:5.2f}%'.format(100 * acc))
 
 #i = np.random.randint(0, x_test.shape[0]) 
 #p = new_model.predict(np.array([x_test[i]]))
@@ -109,5 +112,5 @@ def saving_model():
 #print("{:15}{:5}\t {}\n".format("Word", "True", "Pred"))
 #print("-" *30)
 #for w, true, pred in zip(x_test[i], y_true, p[0]):
-#    print("{:15}{}\t{}".format(words[w-1], tags[true], tags[pred]))
+ #   print("{:15}{}\t{}".format(words[w-1], tags[true], tags[pred]))
 

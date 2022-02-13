@@ -46,5 +46,6 @@ class Post(db.Model):
     number = db.Column(db.Text, nullable=True )#added
     notes=db.Column(db.Text, nullable=True )
     
+    
     def __repr__(self):
         return f"Post('{self.title}', '{self.date_posted}')"

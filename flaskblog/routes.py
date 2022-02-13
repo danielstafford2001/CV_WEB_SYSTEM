@@ -171,7 +171,6 @@ def reset_request():
 #trying to send email for password reset at login
 @app.route("/reset_password/<token>", methods=['GET', 'POST'])
 def reset_token(token):
-
     if current_user.is_authenticated:
         return redirect(url_for('home'))
     user = User.verify_reset_token(token)

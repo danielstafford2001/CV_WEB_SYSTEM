@@ -78,4 +78,4 @@ July 2018
 #print(text)
 
 new_model = tf.keras.models.load_model('my_model.h5')
-x_train, x_test, y_train, y_test, words, tags, max_len,X,y, num_words,num_tags = text_preprocessing()
+#x_train, x_test, y_train, y_test, words, tags, max_len,X,y, num_words,num_tags = text_preprocessing()
