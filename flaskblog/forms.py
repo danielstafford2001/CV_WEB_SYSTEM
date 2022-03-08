@@ -16,6 +16,7 @@ class RegistrationForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password',
                                      validators=[DataRequired(), EqualTo('password')])
+    data = BooleanField('Permission to store my data', validators=[DataRequired()])
     submit = SubmitField('Sign Up')
 
     #check username taken or not
@@ -34,6 +35,7 @@ class LoginForm(FlaskForm):
                         validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     remember = BooleanField('Remember Me')
+    data = BooleanField('Permission to store my data', validators=[DataRequired()])
     submit = SubmitField('Login')
 
 class UpdateAccountForm(FlaskForm):

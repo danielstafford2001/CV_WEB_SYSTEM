@@ -61,6 +61,10 @@
                         {{ form.confirm_password(class="form-control form-control-lg") }}
                     {% endif %}
                 </div>
+                <div class="form-check">
+                    {{ form.data(class="form-check-input") }}
+                    {{ form.data.label(class="form-check-label") }}
+                </div>
             </fieldset>
             <!--submit button-->
             <div class="form-group">
