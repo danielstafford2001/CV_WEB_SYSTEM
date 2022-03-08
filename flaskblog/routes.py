@@ -261,6 +261,9 @@ def new_post():
         pattern1 = re.compile(
             r'\d{3}[-\.\s]??\d{4}[-\.\s]??\d{4}|\d{5}[-\.\s]??\d{3}[-\.\s]??\d{3}|(?:\d{4}\)?[\s-]?\d{3}[\s-]?\d{4})')
         matches1 = pattern1.findall(form.content.data)
+
+        #model call here for getting entities back
+
         post = Post(title=form.title.data, content=form.content.data, author=current_user,email=str(matches), number=str(matches1))
         db.session.add(post)
         db.session.commit()

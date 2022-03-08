@@ -13,6 +13,9 @@ from sklearn.model_selection import train_test_split
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 from livelossplot.tf_keras import PlotLossesCallback
 import matplotlib.pyplot as plt
+from random import choice
+import nltk
+from nltk.tokenize import word_tokenize
 
 np.random.seed(0)
 plt.style.use("ggplot")
@@ -67,7 +70,7 @@ def text_preprocessing():
 
     x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=1)
 
-    return x_train, x_test, y_train, y_test, words, tags, max_len,X,y, num_words,num_tags
+    return x_train, x_test, y_train, y_test, words, tags, max_len,X,y, num_words,num_tags, word2idx, tag2idx
 
 #text_preprocessing()
 
@@ -91,7 +94,7 @@ def create_model():
 
 def saving_model():
     model,X,y,x_train,x_test,y_train, y_test= create_model()
-    model.fit(x_train, np.array(y_train),validation_split=0.2,batch_size=32, epochs=2,verbose=1)
+    model.fit(x_train, np.array(y_train),validation_split=0.2,batch_size=32, epochs=10,verbose=1)
     model.save('my_model.h5')
     return model
 
@@ -100,9 +103,37 @@ def saving_model():
 # Recreate the exact same model, including its weights and the optimizer
 new_model = tf.keras.models.load_model('my_model.h5')
 
-x_train, x_test, y_train, y_test, words, tags, max_len,X,y, num_words,num_tags = text_preprocessing()
+x_train, x_test, y_train, y_test, words, tags, max_len,X,y, num_words,num_tags,word2idx, tag2idx = text_preprocessing()
 
-loss, acc = new_model.evaluate(x_test, y_test)
+nice_input = 'Python'
+
+from random import choice
+import nltk
+from nltk.tokenize import word_tokenize
+
+my_sentence = []
+for word in word_tokenize(nice_input):
+  print('ITERATION')
+  if word in word2idx:
+    my_sentence.append(word2idx[word])
+  else:
+    my_sentence.append(choice(list(set([x for x in range(0, 100000)]) - set(range(0,len(word2idx))))))
+
+padded_input =pad_sequences(maxlen=max_len, sequences=[my_sentence], padding="post", value=num_words-1)
+
+#print(padded_input[0])
+
+#for entry in padded_input[0]:
+#  key = [k for k, v in word2idx.items() if v == entry]
+#  print(key)
+
+print('HERE')
+p = new_model.predict(np.array(padded_input))
+p = np.argmax(p, axis=-1)
+for pred in p[0]:
+    print(tags[pred])
+
+#loss, acc = new_model.evaluate(x_test, y_test)
 #print('Restored model, accuracy: {:5.2f}%'.format(100 * acc))
 
 #i = np.random.randint(0, x_test.shape[0]) 
@@ -112,5 +143,5 @@ loss, acc = new_model.evaluate(x_test, y_test)
 #print("{:15}{:5}\t {}\n".format("Word", "True", "Pred"))
 #print("-" *30)
 #for w, true, pred in zip(x_test[i], y_true, p[0]):
- #   print("{:15}{}\t{}".format(words[w-1], tags[true], tags[pred]))
+#    print("{:15}{}\t{}".format(words[w-1], tags[true], tags[pred]))
 
