@@ -18,8 +18,21 @@
         {% endif %}
       </div>
       <h2 class="article-title">{{ post.title }}</h2>
-      <p class="article-content">{{ post.content }}</p>
+      <a class="btn btn-primary btn-sm " data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false"
+                aria-controls="collapseExample">
+                                    View CV
+            </a>
+            
+            <div class="collapse" id="collapseExample">
+                <div class="card card-body">
+                                    {{ post.content }}
+                                    
+                </div>
+            </div>
+
+        <h3 class="article-title">{{ post.entities }}</h3> 
     </div>
+    
   </article>
   <!-- Modal used when deleting a post-->
   <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">

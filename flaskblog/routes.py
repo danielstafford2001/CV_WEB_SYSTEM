@@ -14,6 +14,8 @@ import re
 from werkzeug.utils import secure_filename
 import textract
 import glob
+import nltk
+from collections import defaultdict
 
 
 @app.route("/")
@@ -203,6 +205,20 @@ def writing_update_note(post_id):
     return render_template('create_note.html', title='Update Notes',
                            form=form, legend='Update Notes')
 
+def nltk_extraction(text):
+    entities = defaultdict(list)
+    for sent in nltk.sent_tokenize(text):
+        for chunk in nltk.ne_chunk(nltk.pos_tag(nltk.word_tokenize(sent))):
+            if hasattr(chunk, 'label'):
+                entities[chunk.label()].append(''.join(c[0] for c in chunk))
+    
+    my_list = []
+    for key, value in entities.items():
+        list1= [key]
+        my_list.append(list1 + value)
+    
+    return my_list
+
 #route that takes file as input and cleans the data (txt,docx,doc,pdf) are accepted and then passes the data onto the new_postfile route which is just a form for a new post that will be pre-populated with the data.
 @app.route('/uploader',methods = ['GET', 'POST'])
 @login_required
@@ -233,7 +249,9 @@ def new_postfile():
         pattern1 = re.compile(
             r'\d{3}[-\.\s]??\d{4}[-\.\s]??\d{4}|\d{5}[-\.\s]??\d{3}[-\.\s]??\d{3}|(?:\d{4}\)?[\s-]?\d{3}[\s-]?\d{4})')
         matches1 = pattern1.findall(form.content.data)
-        post = Post(title=form.title.data, content=form.content.data, author=current_user,email=str(matches), number=str(matches1))
+
+        nltk_result= str(nltk_extraction(form.content.data))
+        post = Post(title=form.title.data, content=form.content.data, author=current_user,email=str(matches), number=str(matches1),entities= nltk_result)
         db.session.add(post)
         db.session.commit()
         flash('Your post has been created!', 'success')
@@ -263,8 +281,10 @@ def new_post():
         matches1 = pattern1.findall(form.content.data)
 
         #model call here for getting entities back
+        nltk_result= str(nltk_extraction(form.content.data))
 
-        post = Post(title=form.title.data, content=form.content.data, author=current_user,email=str(matches), number=str(matches1))
+        post = Post(title=form.title.data, content=form.content.data, author=current_user,email=str(matches), number=str(matches1), 
+        entities= nltk_result)
         db.session.add(post)
         db.session.commit()
         flash('Your post has been created!', 'success')
