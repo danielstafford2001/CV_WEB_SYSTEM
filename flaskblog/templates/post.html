@@ -2,6 +2,7 @@
 
 {% extends "layout.html" %}
 {% block content %}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.min.js"></script>
   <article class="media content-section">
     <!--displaying single post with same logic as home page with option to update/delete/add notes for posts-->
     <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}">
@@ -14,6 +15,7 @@
             <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('update_post', post_id=post.id) }}">Update</a>
             <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
             <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('writing_update_note', post_id=post.id) }}">Add notes</a>
+            <button class="btn btn-info btn-sm mt-1 mb-1" onclick="download()">Download</button>
           </div>
         {% endif %}
       </div>
@@ -22,18 +24,21 @@
                 aria-controls="collapseExample">
                                     View CV
             </a>
-            
             <div class="collapse" id="collapseExample">
                 <div class="card card-body">
-                                    {{ post.content }}
-                                    
+                                    {{ post.content }}                  
                 </div>
             </div>
-
-        <h3 class="article-title">{{ post.entities }}</h3> 
+        <h5 class="article-title">{{ post.entities }}</h5> 
     </div>
     
   </article>
+  <div id="pdfPost" style="display: none;">
+    <div class="media-body">
+      <h2>{{ post.title }}</h2>
+      <p class="article-content">{{ post.content }}</p>
+    </div>
+  </div>
   <!-- Modal used when deleting a post-->
   <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -53,4 +58,19 @@
       </div>
     </div>
   </div>
+
+  <script>
+    function download() {
+      var doc = new jsPDF();  //create jsPDF object
+      doc.fromHTML(document.getElementById("pdfPost"), // page element which you want to print as PDF
+			15, 15, 
+		  {
+			  'width': 170  //set width
+		  },
+		  function(a) 
+		  {
+			  doc.save("HTML2PDF.pdf"); // save file name as HTML2PDF.pdf
+		  });
+    }
+  </script>
 {% endblock content %}

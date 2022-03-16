@@ -216,8 +216,8 @@ def nltk_extraction(text):
     for key, value in entities.items():
         list1= [key]
         my_list.append(list1 + value)
-    
-    return my_list
+    return "\n\n".join([x[0] + '->' + ', '.join(x[1:]) for x in my_list])
+
 
 #route that takes file as input and cleans the data (txt,docx,doc,pdf) are accepted and then passes the data onto the new_postfile route which is just a form for a new post that will be pre-populated with the data.
 @app.route('/uploader',methods = ['GET', 'POST'])
@@ -250,7 +250,7 @@ def new_postfile():
             r'\d{3}[-\.\s]??\d{4}[-\.\s]??\d{4}|\d{5}[-\.\s]??\d{3}[-\.\s]??\d{3}|(?:\d{4}\)?[\s-]?\d{3}[\s-]?\d{4})')
         matches1 = pattern1.findall(form.content.data)
 
-        nltk_result= str(nltk_extraction(form.content.data))
+        nltk_result= nltk_extraction(form.content.data)
         post = Post(title=form.title.data, content=form.content.data, author=current_user,email=str(matches), number=str(matches1),entities= nltk_result)
         db.session.add(post)
         db.session.commit()
@@ -281,7 +281,7 @@ def new_post():
         matches1 = pattern1.findall(form.content.data)
 
         #model call here for getting entities back
-        nltk_result= str(nltk_extraction(form.content.data))
+        nltk_result= nltk_extraction(form.content.data)
 
         post = Post(title=form.title.data, content=form.content.data, author=current_user,email=str(matches), number=str(matches1), 
         entities= nltk_result)

@@ -12,7 +12,16 @@
               <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
             </div>
             <h2><a class="article-title" href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h2>
-            <p class="article-content">{{ post.content }}</p>
+            <a class="btn btn-primary btn-sm " data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false"
+                aria-controls="collapseExample">
+                                    View CV
+            </a>
+            <div class="collapse" id="collapseExample">
+                <div class="card card-body">
+                                    {{ post.content }}                  
+                </div>
+            </div>
+            <h5 class="article-title">{{ post.entities }}</h5> 
           </div>
         </article>
     {% endfor %}

@@ -21,11 +21,29 @@ def nltk_extraction(text):
     for key, value in entities.items():
         list1= [key]
         my_list.append(list1 + value)
-    
-    return my_list
+   # print("\n".join([x[0] + '->' + ', '.join(x[1:]) for x in my_list]))
+    #result = ""
+    #for i in range(3):
+        #result += f"{i[0]} -> {.join(i[1:])}\n"
+    return "\n\n".join([x[0] + '->' + ', '.join(x[1:]) for x in my_list])
 
-result = nltk_extraction(page)
-print(result)
+output = nltk_extraction(page)
+print(output)
 
-#for i in result:
- #   print(i[0], '->', ', '.join(i[1:]))
+#print("\n".join([x[0] + '->' + ', '.join(x[1:]) for x in output]))
+#    print(i[0], '->', ', '.join(i[1:]))
+
+#for i in range(3):
+#    print(i, '->',i+1)
+
+
+#x = "#".join(myTuple)
+#print(x)
+#my_list1 = ["John", "Peter","Joe"]
+#my_list2= ["x", "y"]
+
+#result = ""
+#for i in range(3):
+ #   result += f"{my_list[i]} -> {.join(i[1:])}\n"
+
+#print(result)
