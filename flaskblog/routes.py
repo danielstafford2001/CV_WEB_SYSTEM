@@ -16,7 +16,44 @@ import textract
 import glob
 import nltk
 from collections import defaultdict
+import sqlite3
 
+
+    
+@app.route("/titles")
+def titles():
+    posts = Post.query.order_by(Post.date_posted.desc())
+    titles = []
+    for post in posts:
+        is_new = True
+        for title in titles:
+            if title['title'] == post.title:
+                title['num'] += 1
+                is_new = False
+        if is_new:
+            title = {}
+            title['title'] = post.title
+            title['num'] = 1
+            titles.append(title)
+    return render_template('title.html', titles=titles)
+
+@app.route("/posts/title", methods=['GET', 'POST'])
+def posts_by_title():
+    if request.method == 'POST':
+        post_title = request.form.get('title')
+        posts = Post.query.filter_by(title=post_title).all()
+    return render_template('posts_title.html', posts=posts)
+
+@app.route("/titles")
+def all_titles():
+    conn = sqlite3.connect('food.db')
+    conn.row_factory = lambda cursor, row: row[0]
+    c = conn.cursor()
+    ads = c.execute("SELECT title FROM post").fetchall()
+    for row in ads:
+        print(row)
+
+    return render_template("my_ads.html", ads=ads)
 
 @app.route("/")
 @app.route("/home")

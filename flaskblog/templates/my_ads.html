@@ -1,0 +1,15 @@
+<!--some parts based on [1] in bibliography-->
+
+{% extends "layout.html" %}
+{% block content %}
+<div class="row">
+    <div class="column">
+     <h2>My Ads</h2>
+ 
+     <ul>
+         {% for ad in ads %}
+         <li>{{ads}}</li>
+         {% endfor %}
+     </ul>
+  </div>
+{% endblock content %}
