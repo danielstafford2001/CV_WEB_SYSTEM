@@ -1,0 +1,84 @@
+{% extends "layout.html" %}
+{% block content %}
+
+
+<!-- <title>Flask-File Drag Drop System</title>
+
+<div>
+{{ dropzone.load_css() }}
+{{ dropzone.style('border: 2px dashed #0087F7; margin: 10%; min-height: 400px;') }}
+
+
+  
+{{ dropzone.create(action='drag_drop') }}
+{{ dropzone.load_js() }}
+{{ dropzone.config(
+    custom_init='dz = this;document.getElementById("upload-btn").addEventListener("click", function handler(e) {dz.processQueue();});',
+                 custom_options='autoProcessQueue: false, addRemoveLinks: true, parallelUploads: 20,') }}
+</div>
+<div>
+  <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('new_postfile')}}">Next Step</a>
+</div> -->
+
+<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />      
+
+<form id="upload-form" class="dropzone" action="dragdrop" method="POST" style="position: relative; margin-top: 100px;">
+    <!-- this is were the previews should be shown. -->
+    <div class="previews"></div>
+    
+    <!-- Now setup your input fields -->
+    <div class="d-flex" style="position: absolute; top: -70px; width: 75%;">
+      <input type="text" name="title" class="form-control" required placeholder="Title" id="title"/>
+      <button type="submit" class="btn btn-primary ml-5">Upload Files</button>
+    </div>
+</form>
+
+<script>
+  Dropzone.options.uploadForm = { // The camelized version of the ID of the form element
+
+    // The configuration we've talked about above
+    autoProcessQueue: false,
+    uploadMultiple: true,
+    parallelUploads: 100,
+    maxFiles: 100,
+
+    // The setting up of the dropzone
+    init: function() {
+      var myDropzone = this;
+
+      // First change the button to actually tell Dropzone to process the queue.
+      this.element.querySelector("button[type=submit]").addEventListener("click", function(e) {
+        // Make sure that the form isn't actually being sent.
+        e.preventDefault();
+        e.stopPropagation();
+
+        var title = document.getElementById("title").value;
+        if (title === "") {
+          alert("Please insert the title for uploaded posts")
+          return
+        }
+
+        myDropzone.processQueue();
+      });
+
+      // Listen to the sendingmultiple event. In this case, it's the sendingmultiple event instead
+      // of the sending event because uploadMultiple is set to true.
+      this.on("sendingmultiple", function() {
+        // Gets triggered when the form is actually being sent.
+        // Hide the success button or the complete form.
+      });
+      this.on("successmultiple", function(files, response) {
+        // Gets triggered when the files have successfully been sent.
+        // Redirect user or notify of success.
+      });
+      this.on("errormultiple", function(files, response) {
+        // Gets triggered when there was an error sending the files.
+        // Maybe show form again, and notify user of error
+      });
+    }
+
+    }
+</script>
+
+{% endblock content %}

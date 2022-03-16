@@ -16,6 +16,7 @@ import textract
 import glob
 import nltk
 from collections import defaultdict
+from flask_dropzone import Dropzone
 import sqlite3
 
 
@@ -329,3 +330,45 @@ def new_post():
     return render_template('create_post.html', title='New Post',
                            form=form, legend='New Post')
         
+#route that takes file as input from drag and drop and cleans the data (txt,docx,doc,pdf) are accepted and then passes the data onto the new_postfile route which is just a form for a new post that will be pre-populated with the data.
+app.config.update(
+    DROPZONE_MAX_FILE_SIZE = 1024,
+    DROPZONE_TIMEOUT = 5*60*1000)
+
+dropzone = Dropzone(app)
+# @app.route('/dragdrop',methods=['POST'])
+# def drag_drop():
+#     if request.method == 'POST':
+#         f = request.files.get('file')
+#         filename = secure_filename(f.filename)
+#         f.save(os.path.join(app.config['UPLOAD_FOLDER']+ filename))
+#         path= os.path.join(app.config['UPLOAD_FOLDER']+ filename)
+#         pageDOCX = textract.process(path)
+#         pageDOCX=str(pageDOCX,'utf-8')
+#         pageDOCX= pageDOCX.replace('\n',' ').strip()
+        
+#     return render_template('index.html')
+
+@app.route('/dragdrop',methods=['POST', 'GET'])
+def drag_drop():
+    if request.method == 'POST':
+        my_files = request.files    
+        title = request.form['title'] 
+
+        for item in my_files:
+            uploaded_file = my_files.get(item)
+            filename = secure_filename(uploaded_file.filename)
+            uploaded_file.save(os.path.join(app.config['UPLOAD_FOLDER']+ filename))
+            path= os.path.join(app.config['UPLOAD_FOLDER']+ filename)
+            pageDOCX = textract.process(path)
+            pageDOCX=str(pageDOCX,'utf-8')
+            pageDOCX= pageDOCX.replace('\n',' ').strip() 
+            
+            post = Post(title=title, content=pageDOCX, author=current_user)
+            db.session.add(post)
+            db.session.commit()
+        
+        flash('Your posts has been uploaded!', 'success')
+        return redirect(url_for('home')) 
+        
+    return render_template('index.html')
