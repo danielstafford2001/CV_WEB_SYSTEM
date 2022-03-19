@@ -21,7 +21,7 @@ np.random.seed(0)
 plt.style.use("ggplot")
 
 def text_preprocessing():
-    data = pd.read_csv('1-3000.csv')
+    data = pd.read_csv('1-8600_1.csv')
     data = data.fillna(method="ffill")#fill any empty rows with the row above
 
    # print("Unique words in corpus:", data['Word'].nunique())
@@ -75,7 +75,7 @@ def text_preprocessing():
 #text_preprocessing()
 
 def create_model():
-    x_train, x_test, y_train, y_test, words, tags, max_len,X,y, num_words,num_tags =text_preprocessing()
+    x_train, x_test, y_train, y_test, words, tags, max_len,X,y, num_words,num_tags, word2idx, tag2idx =text_preprocessing()
     input_word = Input(shape=(max_len,))
     model = Embedding(input_dim=num_words, output_dim=max_len, input_length=max_len)(input_word)
     model = SpatialDropout1D(0.1)(model)
@@ -101,25 +101,25 @@ def saving_model():
 #saving_model()
 
 # Recreate the exact same model, including its weights and the optimizer
-new_model = tf.keras.models.load_model('my_model.h5')
+#new_model = tf.keras.models.load_model('my_model 2.h5')
 
-x_train, x_test, y_train, y_test, words, tags, max_len,X,y, num_words,num_tags,word2idx, tag2idx = text_preprocessing()
+#x_train, x_test, y_train, y_test, words, tags, max_len,X,y, num_words,num_tags,word2idx, tag2idx = text_preprocessing()
 
-nice_input = 'Python'
+#nice_input = 'Python'
 
-from random import choice
-import nltk
-from nltk.tokenize import word_tokenize
+#from random import choice
+#import nltk
+#from nltk.tokenize import word_tokenize
 
-my_sentence = []
-for word in word_tokenize(nice_input):
-  print('ITERATION')
-  if word in word2idx:
-    my_sentence.append(word2idx[word])
-  else:
-    my_sentence.append(choice(list(set([x for x in range(0, 100000)]) - set(range(0,len(word2idx))))))
+#my_sentence = []
+#for word in word_tokenize(nice_input):
+#  print('ITERATION')
+#  if word in word2idx:
+ #   my_sentence.append(word2idx[word])
+ # else:
+  #  my_sentence.append(choice(list(set([x for x in range(0, 100000)]) - set(range(0,len(word2idx))))))
 
-padded_input =pad_sequences(maxlen=max_len, sequences=[my_sentence], padding="post", value=num_words-1)
+#padded_input =pad_sequences(maxlen=max_len, sequences=[my_sentence], padding="post", value=num_words-1)
 
 #print(padded_input[0])
 
@@ -127,11 +127,11 @@ padded_input =pad_sequences(maxlen=max_len, sequences=[my_sentence], padding="po
 #  key = [k for k, v in word2idx.items() if v == entry]
 #  print(key)
 
-print('HERE')
-p = new_model.predict(np.array(padded_input))
-p = np.argmax(p, axis=-1)
-for pred in p[0]:
-    print(tags[pred])
+#print('HERE')
+#p = new_model.predict(np.array(padded_input))
+#p = np.argmax(p, axis=-1)
+#for pred in p[0]:
+#    print(tags[pred])
 
 #loss, acc = new_model.evaluate(x_test, y_test)
 #print('Restored model, accuracy: {:5.2f}%'.format(100 * acc))

@@ -25,13 +25,18 @@ def nltk_extraction(text):
     #result = ""
     #for i in range(3):
         #result += f"{i[0]} -> {.join(i[1:])}\n"
-    return "\n\n".join([x[0] + '->' + ', '.join(x[1:]) for x in my_list])
+    
+    return my_list
+    #return "\n\n".join([x[0] + '->' + ', '.join(x[1:]) for x in my_list])
 
 output = nltk_extraction(page)
 print(output)
 
+for i in range(len(output)):
+    print(output[i][0], '->' ,output[i][1:])
+
 #print("\n".join([x[0] + '->' + ', '.join(x[1:]) for x in output]))
-#    print(i[0], '->', ', '.join(i[1:]))
+    #print(i[0], '->', ', '.join(i[1:]))
 
 #for i in range(3):
 #    print(i, '->',i+1)

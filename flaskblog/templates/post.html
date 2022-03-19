@@ -29,14 +29,19 @@
                                     {{ post.content }}                  
                 </div>
             </div>
-        <h5 class="article-title">{{ post.entities }}</h5> 
-    </div>
+        <h5 class="article-title">Email: {{ post.email }}</h5> 
+        <h5 class="article-title">Phone number: {{ post.number }}</h5> 
+        <h5 class="article-title">Found information: <br></h5>
+        <h5 class="article-title"> {{ post.entities }}</h5> 
+        </div>
     
   </article>
   <div id="pdfPost" style="display: none;">
     <div class="media-body">
       <h2>{{ post.title }}</h2>
       <p class="article-content">{{ post.content }}</p>
+      <h2>ENTITIES</h2>
+      <p class="article-content">{{ post.entities }}</p>
     </div>
   </div>
   <!-- Modal used when deleting a post-->
