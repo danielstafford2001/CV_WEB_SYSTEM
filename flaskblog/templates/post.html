@@ -33,6 +33,7 @@
         <h5 class="article-title">Phone number: {{ post.number }}</h5> 
         <h5 class="article-title">Found information: <br></h5>
         <h5 class="article-title"> {{ post.entities }}</h5> 
+        <p class="article-content">{{post.entity }}</p>
         </div>
     
   </article>
@@ -66,6 +67,7 @@
 
   <script>
     function download() {
+      var fileName = "{{ post.title }}"
       var doc = new jsPDF();  //create jsPDF object
       doc.fromHTML(document.getElementById("pdfPost"), // page element which you want to print as PDF
 			15, 15, 
@@ -74,7 +76,7 @@
 		  },
 		  function(a) 
 		  {
-			  doc.save("HTML2PDF.pdf"); // save file name as HTML2PDF.pdf
+			  doc.save(fileName + ".pdf"); // save file name as HTML2PDF.pdf
 		  });
     }
   </script>
