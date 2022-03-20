@@ -18,9 +18,11 @@ import nltk
 from collections import defaultdict
 from flask_dropzone import Dropzone
 import sqlite3
+from flaskblog.serve import get_model_api
+
+model_api = get_model_api()
 
 
-    
 @app.route("/titles")
 def titles():
     posts = Post.query.order_by(Post.date_posted.desc())
@@ -321,8 +323,12 @@ def new_post():
         #model call here for getting entities back
         nltk_result= nltk_extraction(form.content.data)
 
+        # using model_api to get model predictions
+        res = model_api(form.content.data)
+        
+
         post = Post(title=form.title.data, content=form.content.data, author=current_user,email=str(matches), number=str(matches1), 
-        entities= nltk_result)
+        entities= nltk_result, entity=str(res))
         db.session.add(post)
         db.session.commit()
         flash('Your post has been created!', 'success')

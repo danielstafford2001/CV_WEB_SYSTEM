@@ -1,6 +1,5 @@
 #some parts based on [1] in bibliography
 
-
 import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
