@@ -29,10 +29,14 @@
                                     {{ post.content }}                  
                 </div>
             </div>
-        <h5 class="article-title">Email: {{ post.email }}</h5> 
-        <h5 class="article-title">Phone number: {{ post.number }}</h5> 
-        <h5 class="article-title">Found information: <br></h5>
-        <h5 class="article-title"> {{ post.entities }}</h5> 
+        
+        <p class="article-content">Email: {{post.email }}</p>
+        <p class="article-content">Phone Number: {{post.number }}</p>
+        
+        
+        <h5 class="article-content">Generic Information:</h5>
+        <p class="article-content">{{post.entities }}</p>
+        <h5 class="article-content">Specialised Information:</h5>
         <p class="article-content">{{post.entity }}</p>
         </div>
     

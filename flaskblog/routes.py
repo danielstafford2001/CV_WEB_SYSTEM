@@ -370,7 +370,18 @@ def drag_drop():
             pageDOCX=str(pageDOCX,'utf-8')
             pageDOCX= pageDOCX.replace('\n',' ').strip() 
             
-            post = Post(title=title, content=pageDOCX, author=current_user)
+            pattern = re.compile(r'[\w\.-]+@[\w\.-]+')
+            matches = pattern.findall(pageDOCX)
+            pattern1 = re.compile(
+                r'\d{3}[-\.\s]??\d{4}[-\.\s]??\d{4}|\d{5}[-\.\s]??\d{3}[-\.\s]??\d{3}|(?:\d{4}\)?[\s-]?\d{3}[\s-]?\d{4})')
+            matches1 = pattern1.findall(pageDOCX)
+
+            #model call here for getting entities back
+            nltk_result= nltk_extraction(pageDOCX)
+
+            # using model_api to get model predictions
+            res = model_api(pageDOCX)
+            post = Post(title=title, content=pageDOCX, author=current_user, email=str(matches), number=str(matches1), entities= nltk_result, entity=str(res))
             db.session.add(post)
             db.session.commit()
         
