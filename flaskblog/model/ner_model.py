@@ -21,7 +21,7 @@ from tensorflow.keras.models import load_model
 num_words = 22690
 num_tags = 25
 
-#These lines of code used to allow memory grow dynamically on GPU.
+#allow memory grow dynamically on GPU.
 gpus = tf.config.experimental.list_physical_devices('GPU')
 if gpus:
     for gpu in gpus:
@@ -29,7 +29,7 @@ if gpus:
     logical_gpus = tf.config.experimental.list_logical_devices('GPU')
 
 
-# NerModel class it has methods to prepare model and make predictions.
+# NerModel class  has methods to prepare model and make predictions.
 class NERModel(object):
     #tags, words and paths to model are stored in cfg.json other things stored in .npy
     def __init__(self, cfg):
@@ -45,7 +45,7 @@ class NERModel(object):
         self.case2Idx = np.load(os.path.join(full_path, "case2Idx.npy"), allow_pickle=True).item()
         self.idx2Label = np.load(os.path.join(full_path, "idx2Label.npy"), allow_pickle=True).item()
 
-    #this functions loads model architecture and model weights.
+    #loads model architecture and model weights.
     def prepare_model(self, model_path):
         loaded_model = load_model(model_path)
         print("model loaded successfully")
@@ -116,19 +116,19 @@ class NERModel(object):
         Sentence[2] = pad_sequences(Sentence[2],52,padding='post')
         return Sentence
 
-    # This function makes nice looking format from model prediction tags and words
+    # Nice formatting for model predictions
 
     def process_prediction(self, tokens, tags):
 
-        # for each tag we need to get their pos
+        # for each tag  get their pos
         pos_tags = [pos for token, pos in pos_tag(tokens)]
         # then convert it to tuples
         conlltags = [(token, pos, tg) for token, pos, tg in zip(tokens, pos_tags, tags)]
-        # now we can create tree
+        # now create tree
         ne_tree = conlltags2tree(conlltags)
 
         result = []
-        # now we adding all words that has different tag than 'O'
+        # now  adding all words that has different tag than 'O'
         # format is [(word,tag)]
         for subtree in ne_tree:
             if type(subtree) == Tree:
@@ -137,7 +137,6 @@ class NERModel(object):
                 result.append((string, label))
 
         #creating a dict in format: {key: []}
-
         tags_list = dict(zip(self.full_tag_names.keys(), [set() for _ in range(len(self.full_tag_names.keys()))]))
 
         for value, key in result:
@@ -151,12 +150,11 @@ class NERModel(object):
 
     # prediction for a whole text
     def full_predict(self, text):
-        # splitlines in text
         paragraphs = text.splitlines()
         paragraphs = [paragraph.strip() for paragraph in paragraphs]
         paragraphs = [paragraph for paragraph in paragraphs if paragraph] # checking for empty lines
 
-        # after this we need to split our paragraphs into sentences
+        # need to split our paragraphs into sentences
         res = []
         for paragraph in paragraphs:
             sentences = nltk.sent_tokenize(paragraph)

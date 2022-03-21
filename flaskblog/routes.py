@@ -55,7 +55,6 @@ def all_titles():
     ads = c.execute("SELECT title FROM post").fetchall()
     for row in ads:
         print(row)
-
     return render_template("my_ads.html", ads=ads)
 
 @app.route("/")
@@ -109,12 +108,10 @@ def save_picture(form_picture):
     _, f_ext = os.path.splitext(form_picture.filename)
     picture_fn = random_hex + f_ext
     picture_path = os.path.join(app.root_path, 'static/profile_pics', picture_fn)
-
     output_size = (125, 125)
     i = Image.open(form_picture)
     i.thumbnail(output_size)
     i.save(picture_path)
-
     return picture_fn
 
 @app.route("/account", methods=['GET', 'POST'])
@@ -173,8 +170,7 @@ def delete_post(post_id):
     flash('Your post has been deleted!', 'success')
     return redirect(url_for('home'))
 
-
-#show all posts by a given user whilest using pagination in descending posting order
+#show all posts by a given user while using pagination in descending posting order
 @app.route("/user/<string:username>")
 def user_posts(username):
     page = request.args.get('page', 1, type=int)
@@ -184,7 +180,7 @@ def user_posts(username):
         .paginate(page=page, per_page=5)
     return render_template('user_posts.html', posts=posts, user=user)
 
-#trying to send email for password reset at login
+#send email for password reset at login
 def send_reset_email(user):
     token = user.get_reset_token()
     msg = Message('Password Reset Request',
@@ -197,7 +193,7 @@ If you did not make this request then simply ignore this email and no changes wi
 '''
     mail.send(msg)
 
-#trying to send email for password reset at login
+#send email for password reset at login
 @app.route("/reset_password", methods=['GET', 'POST'])
 def reset_request():
     if current_user.is_authenticated:
@@ -210,7 +206,7 @@ def reset_request():
         return redirect(url_for('login'))
     return render_template('reset_request.html', title='Reset Password', form=form)
 
-#trying to send email for password reset at login
+#send email for password reset at login
 @app.route("/reset_password/<token>", methods=['GET', 'POST'])
 def reset_token(token):
     if current_user.is_authenticated:
@@ -245,6 +241,7 @@ def writing_update_note(post_id):
     return render_template('create_note.html', title='Update Notes',
                            form=form, legend='Update Notes')
 
+#function that returns the NLTK results for a given CV input
 def nltk_extraction(text):
     entities = defaultdict(list)
     for sent in nltk.sent_tokenize(text):
@@ -274,11 +271,10 @@ def upload_file():
         #file = open(app.config['UPLOAD_FOLDER'] + filename,"r")
         content = pageDOCX
         return redirect(url_for('new_postfile'))
-        #print(path)
 
     return render_template('upload.html')
 
-#/Users/danielstafford/Desktop/3rd year/Project/CV Work/CV_WEB_SYSTEM/flaskblog/static
+
 @app.route("/post/newfile", methods=['GET', 'POST'])
 @login_required
 def new_postfile():
@@ -286,18 +282,21 @@ def new_postfile():
     if form.validate_on_submit():
         pattern = re.compile(r'[\w\.-]+@[\w\.-]+')
         matches = pattern.findall(form.content.data)
+        dirname = os.path.dirname(__file__)
+        print(dirname)
         pattern1 = re.compile(
             r'\d{3}[-\.\s]??\d{4}[-\.\s]??\d{4}|\d{5}[-\.\s]??\d{3}[-\.\s]??\d{3}|(?:\d{4}\)?[\s-]?\d{3}[\s-]?\d{4})')
         matches1 = pattern1.findall(form.content.data)
-
         nltk_result= nltk_extraction(form.content.data)
-        post = Post(title=form.title.data, content=form.content.data, author=current_user,email=str(matches), number=str(matches1),entities= nltk_result)
+        res = model_api(form.content.data)
+        post = Post(title=form.title.data, content=form.content.data, author=current_user,email=str(matches), number=str(matches1),entities= nltk_result, entity=str(res))
         db.session.add(post)
         db.session.commit()
         flash('Your post has been created!', 'success')
         return redirect(url_for('home'))
     elif request.method == 'GET':
-        folder_path= r'/Users/danielstafford/Desktop/3rd year/Project/CV Work/CV_WEB_SYSTEM/flaskblog/static/*'
+        dirname = os.path.dirname(__file__)
+        folder_path= os.path.join(dirname, 'static/*')
         files = glob.glob(folder_path) 
         max_file = max(files, key=os.path.getctime)
         pageDOCX = textract.process(max_file)
@@ -325,8 +324,6 @@ def new_post():
 
         # using model_api to get model predictions
         res = model_api(form.content.data)
-        
-
         post = Post(title=form.title.data, content=form.content.data, author=current_user,email=str(matches), number=str(matches1), 
         entities= nltk_result, entity=str(res))
         db.session.add(post)
@@ -342,18 +339,6 @@ app.config.update(
     DROPZONE_TIMEOUT = 5*60*1000)
 
 dropzone = Dropzone(app)
-# @app.route('/dragdrop',methods=['POST'])
-# def drag_drop():
-#     if request.method == 'POST':
-#         f = request.files.get('file')
-#         filename = secure_filename(f.filename)
-#         f.save(os.path.join(app.config['UPLOAD_FOLDER']+ filename))
-#         path= os.path.join(app.config['UPLOAD_FOLDER']+ filename)
-#         pageDOCX = textract.process(path)
-#         pageDOCX=str(pageDOCX,'utf-8')
-#         pageDOCX= pageDOCX.replace('\n',' ').strip()
-        
-#     return render_template('index.html')
 
 @app.route('/dragdrop',methods=['POST', 'GET'])
 def drag_drop():
@@ -376,7 +361,7 @@ def drag_drop():
                 r'\d{3}[-\.\s]??\d{4}[-\.\s]??\d{4}|\d{5}[-\.\s]??\d{3}[-\.\s]??\d{3}|(?:\d{4}\)?[\s-]?\d{3}[\s-]?\d{4})')
             matches1 = pattern1.findall(pageDOCX)
 
-            #model call here for getting entities back
+            #model call here for getting NLTK entities
             nltk_result= nltk_extraction(pageDOCX)
 
             # using model_api to get model predictions
